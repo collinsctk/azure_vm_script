@@ -1,0 +1,20 @@
+$customConfig = @{
+  "fileUris" = (,"https://raw.githubusercontent.com/collinsctk/azure_vm_script/main/lb_init.sh");
+  "commandToExecute" = "sh lb_init.sh"
+}
+
+$vmss = Get-AzVmss -ResourceGroupName "qytang_resource_group_lb" -VMScaleSetName "qytang-vm-ss"
+
+$vmss = Add-AzVmssExtension `
+  -VirtualMachineScaleSet $vmss `
+  -Name "vm-ss-cmd" `
+  -Publisher "Microsoft.Azure.Extensions" `
+  -Type "CustomScript" `
+  -TypeHandlerVersion 2.0 `
+  -Setting $customConfig
+
+
+Update-AzVmss `
+  -ResourceGroupName "qytang_resource_group_lb" `
+  -Name "qytang-vm-ss" `
+  -VirtualMachineScaleSet $vmss
